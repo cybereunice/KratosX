@@ -1,0 +1,200 @@
+import webbrowser
+import tkinter as tk
+from tkinter import messagebox
+import os
+import pygame  # Import the pygame library
+
+# Initialize pygame mixer
+pygame.mixer.init()
+
+# Load the background music file
+pygame.mixer.music.load("background_music.mp3")  # Replace "background_music.mp3" with the actual file name
+
+# Start playing the background music
+pygame.mixer.music.play(-1)  # -1 makes the music loop indefinitely
+
+# Dictionary of exercises for different muscle groups
+exercises = {
+    "Chest": [
+        {"Exercise": "Alternating Dumbbell Bench Press", "Explanation": "Lie your back onto a bench while squeezing your shoulder blades together and placing your heels firmly on the ground underneath your knees.\n    The bench should be in contact with your head, shoulders, and butt at all times.\n    Position a dumbbell to rest just outside of our chest in your left hand.\n    Keeping your core braced, extend your left elbow while keeping it at a 45 degree angle from your torso.\n    Once your arm is fully extended over your shoulder, exhale to return the dumbbell back to the starting position.\n    Repeat with opposite side.", "Video": "https://youtu.be/IODxDxX7oi4"},
+        {"Exercise": "Around the Worlds", "Explanation": "Lie your back onto a bench with your feet positioned under your knees.\n    Grab ahold of a pair of dumbbells in both hands and position then beside your hip with your palms facing up.\n    Bring the dumbbells away from your hips (in a horizontal plane) toward an overhead position while keeping your elbows slightly bent.\n    Return the dumbbells back to the starting position and repeat.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Barbell Bench Press\n\t1. Barbell Flat Bench Press\n\t2. Barbell Decline Bench Press\n\t3. Barbell Incline Bench Press", "Explanation": "Lie your back onto a bench while squeezing your shoulder blades together and place your heels firmly on the ground underneath your knees.\n    The bench should be in contact with your head, shoulders, and butt at all times.\n    Grab ahold of the barbell just outside shoulder-width apart before unracking the barbell so that your arms are extended over your shoulders.\n    Keeping your core braced by breathing into your stomach and flexing the abdominal muscles, descend the barbell to your chest by flexing your elbows keeping them at a 45 degree angle from your torso.\n    Gently touch the middle of your chest with the barbell before exhaling the barbell back to the starting position.\n    For incline bench press, the angle is commonly between 30 to 45 degrees, while decline bench press is typically set at a decline of around 10 to 15 degrees. Although the angle of incline and decline can be customised according to the individuals preferences.", "Video": "https://youtu.be/IODxDxX7oi4"},
+        {"Exercise": "Cable Chest Press\n \t1.Upright Cable Chest Press   \n \t2.Incline Cable Chest Press", "Explanation": "Place the pulleys to just above shoulder height.\n    Sit with your back pressed against the back rest of the seat while holding the pair of dual pulley handles at chest height, shoulder-width apart, and palms facing down.\n    Brace your core to keep your spine in a stationary neutral position.\n    Exhale to extend your arms forward keeping both handles in front of your shoulders with your elbows just below your shoulders.\n    Once you've reached full arm extension, flex your elbows to bring the handles back to the starting position.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Cable Crossover Fly\n \t1.Standing Cable Crossover Fly\n \t2.Cable Crossover Flat Bench Fly \n\t3. Cable Crossover Incline Bench Fly", "Explanation": "• Standing Cable Crossover:- Place the pulleys to just above head height.\n    Stand in an upright staggered stance while holding the pair of dual pulley handles with arms laterally extended at shoulder height and palms facing forward, slightly angled down.\n    Brace your core to keep your spine in a stationary neutral position.\n    Keep your arms extended and create a wide arc to flex the handles together at the bottom of your ribcage.\n    Return back to the starting position.\n\n    • Cable Crossover Flat Bench Fly:- Position and lay back on a flat bench directly between two cables such that the middle of your chest is in line with the cables.\n    Grasp a handle in each hand such that your palms are facing up.\n    Engage your chest to arc the cables in front of your chest until the handles are almost touching.\n    Tense your chest and hold this position for a moment at the top of the movement.\n    Slowly allow the cables to return to the starting position while maintaining tension in your chest.\n    Maintain good posture by keeping your head, shoulders and hips in contact with the bench at all times as well as maintaining a slight bend in your elbows.\n    You should feel the tension in your chest.\n\n    • Cable Crossover Incline Bench Fly:- Position and sit on an incline bench between two cables and grasp a handle in each hand.\n    Tense your chest to raise the weight while pulling the cables in an arc up and in front of you.\n    Hold this position for a moment at the top of the movement while maintaining tension in your chest.\n    Slowly allow the weights to descend back into the starting position while maintaining tension in your chest.\n    Maintain good posture by keeping your head, shoulders and hips in contact with the bench as well as keeping a slight bend in your elbows throughout the movement.\n    You should feel this exercise primarily in your chest.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Chest Dip", "Explanation": "Suspend yourself on a set of parallel bars. Allow your torso to lean forwards and your elbows to slightly flare out away from your body.\n    Control your body as you descend into the starting position. If you feel a stretch in your chest this is a good sign you are in the correct position.\n    Engage your chest to raise your body while driving the palms of your hands down through the parallel bars. Don't lock out your elbows at the top of the movement.\n    Maintain good body positioning by keeping your torso at a slight forward angle.\n    You should feel this exercise primarily in your chest, but may feel some tension in your triceps as well.", "Video": "https://youtu.be/IODxDxX7oi4"},
+        {"Exercise": "Dumbbell Bench Press\n \t1.Dumbbell Flat Bench Press   \n \t2.Dumbbell Decline Bench Press \n\t3.Dumbbell Incline Bench Press", "Explanation": "Cable Chest Press variations provide constant tension on the chest muscles.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Dumbbell Fly\n \t1.Dumbbell Flat Bench Fly \n\t2. Dumbbell Decline Fly \n\t3.Dumbbell Incline Fly", "Explanation": "Around the Worlds target the chest muscles and improve flexibility.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Dumbbell Floor Press", "Explanation": "Barbell Bench Press is a compound movement for chest development.", "Video": "https://youtu.be/IODxDxX7oi4"},
+        {"Exercise": "Dumbbell Larson Press", "Explanation": "Cable Chest Press variations provide constant tension on the chest muscles.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Dumbbell Pullover", "Explanation": "Around the Worlds target the chest muscles and improve flexibility.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Dumbbell Squeeze Press", "Explanation": "Barbell Bench Press is a compound movement for chest development.", "Video": "https://youtu.be/IODxDxX7oi4"},
+        {"Exercise": "Floor Press", "Explanation": "Cable Chest Press variations provide constant tension on the chest muscles.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Freemotion Chest Press", "Explanation": "Cable Chest Press variations provide constant tension on the chest muscles.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Hammerstrength Chest Press\n \t1.Hammerstrength Upright Chest Press \n\t2. Hammerstrength Decline Chest Press \n\t3.Hammerstrength Incline Chest Press", "Explanation": "Around the Worlds target the chest muscles and improve flexibility.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Handle Band Pec Fly", "Explanation": "Barbell Bench Press is a compound movement for chest development.", "Video": "https://youtu.be/IODxDxX7oi4"},
+        {"Exercise": "Incline Dumbbell Squeeze Press", "Explanation": "Barbell Bench Press is a compound movement for chest development.", "Video": "https://youtu.be/IODxDxX7oi4"},
+        {"Exercise": "Low Cable Chest Fly", "Explanation": "Cable Chest Press variations provide constant tension on the chest muscles.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Machine Bench Press", "Explanation": "Around the Worlds target the chest muscles and improve flexibility.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Machine Fly", "Explanation": "Barbell Bench Press is a compound movement for chest development.", "Video": "https://youtu.be/IODxDxX7oi4"},
+        {"Exercise": "Mid Cable Crossover Fly", "Explanation": "Cable Chest Press variations provide constant tension on the chest muscles.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Pause Bench Press", "Explanation": "Around the Worlds target the chest muscles and improve flexibility.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Push Up \n \t1.Classic \n \t2.Decline Push Up \n \t3.Incline Push Up \n \t4.Loop Band Push Up \n \t5.Rotation Push Up \n \t6.One Hand Push Up \n \t7.Wide Push Up", "Explanation": "Barbell Bench Press is a compound movement for chest development.", "Video": "https://youtu.be/IODxDxX7oi4"},
+        {"Exercise": "Reverse Grip Bench Press", "Explanation": "Cable Chest Press variations provide constant tension on the chest muscles.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Single Arm Cable Crossover", "Explanation": "Around the Worlds target the chest muscles and improve flexibility.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Single Arm Cable Press", "Explanation": "Barbell Bench Press is a compound movement for chest development.", "Video": "https://youtu.be/IODxDxX7oi4"},
+        {"Exercise": "Single Arm Floor Press", "Explanation": "Cable Chest Press variations provide constant tension on the chest muscles.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Single Arn Low Cable Crossover Fly", "Explanation": "Around the Worlds target the chest muscles and improve flexibility.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Smith Machine Bench Press\n \t1.Smith Machine Flat Bench Press \n \t2.Smith Machine Decline Press \n\t3.Smith Machine Incine Bench Press", "Explanation": "Cable Chest Press variations provide constant tension on the chest muscles.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+        {"Exercise": "Svend Press \n \t1.Standing Svend Press \n \t2.Incline Svend Press", "Explanation": "Around the Worlds target the chest muscles and improve flexibility.", "Video": "https://youtu.be/gRVjAtPip0Y"},
+    ],
+    "Tricep": [
+        {"Exercise": "Tricep dips", "Explanation": "Tricep dips primarily target the triceps muscles.", "Video": "https://youtu.be/0326dy_-CzM"},
+        {"Exercise": "Tricep pushdowns", "Explanation": "Tricep pushdowns isolate and target the triceps muscles.", "Video": "https://youtu.be/dpSHckiU0Dc"},
+        {"Exercise": "Tricep dips", "Explanation": "Tricep dips primarily target the triceps muscles.", "Video": "https://youtu.be/0326dy_-CzM"},
+        {"Exercise": "Tricep pushdowns", "Explanation": "Tricep pushdowns isolate and target the triceps muscles.", "Video": "https://youtu.be/dpSHckiU0Dc"}
+    ],
+    "Back": [
+        {"Exercise": "Pull-ups", "Explanation": "Pull-ups are a great back exercise as they target the lats and upper back.", "Video": "https://youtu.be/eGo4IYlbE5g"},
+        {"Exercise": "Deadlifts", "Explanation": "Deadlifts work the entire back, along with the legs and core.", "Video": "https://youtu.be/op9kVnSso6Q"},
+        {"Exercise": "Pull-ups", "Explanation": "Pull-ups are a great back exercise as they target the lats and upper back.", "Video": "https://youtu.be/eGo4IYlbE5g"},
+        {"Exercise": "Deadlifts", "Explanation": "Deadlifts work the entire back, along with the legs and core.", "Video": "https://youtu.be/op9kVnSso6Q"}
+    ],
+    "Bicep": [
+        {"Exercise": "Bicep curls", "Explanation": "Bicep curls primarily target the bicep muscles.", "Video": "https://youtu.be/Q6UuLhPyY-0"},
+        {"Exercise": "Hammer curls", "Explanation": "Hammer curls are versatile and target the biceps and forearm muscles.", "Video": "https://youtu.be/ZlpVjNv0xsc"},
+    ],
+    "Legs": [
+        {"Exercise": "Squats", "Explanation": "Squats are excellent compound exercises that target the quads, hamstrings, and glutes.", "Video": "https://youtu.be/mGvzVjuY8SY"},
+        {"Exercise": "Lunges", "Explanation": "Lunges primarily target the quads, hamstrings, and glutes.", "Video": "https://youtu.be/QOVaHwm-Q6U"},
+    ]
+}
+
+# Admin Panel
+user_credentials = {
+    "admin": "welcome135",
+    "a": "a",
+    "parag": "welcome135"
+}
+
+# Function to check login credentials
+def check_login():
+    username = username_entry.get()
+    password = password_entry.get()
+
+    if username in user_credentials and user_credentials[username] == password:
+        messagebox.showinfo("Login Successful", f"Welcome to KratosX, {username}!")
+        show_exercise_selection()
+    else:
+        messagebox.showerror("Login Failed", "Invalid username or password.")
+
+# Function to open YouTube video in a web browser
+def open_video(url):
+    webbrowser.open(url)
+
+# Function to show exercise selection GUI
+def show_exercise_selection():
+    login_frame.pack_forget()
+    exercise_frame.pack()
+    default_muscle_group = muscle_var.get()  # Get the default muscle group
+    update_exercise_info(default_muscle_group)  # Call this to initialize the displayed exercise info
+
+# Function to handle exercise selection
+def select_exercise():
+    muscle_group = muscle_var.get()
+    update_exercise_info(muscle_group)  # Pass the selected muscle group to the function
+
+    if muscle_group in exercises:
+        exercise_count = len(exercises[muscle_group])
+
+        try:
+            video_number = int(exercise_var.get())
+
+            if 1 <= video_number <= exercise_count:
+                # Open requested video in web browser
+                open_video(exercises[muscle_group][video_number - 1]["Video"])
+            else:
+                messagebox.showerror("Invalid Exercise Number", "Invalid exercise number entered.")
+        except ValueError:
+            messagebox.showerror("Invalid Input", "Please enter a valid number.")
+    else:
+        messagebox.showerror("Invalid Muscle Group", "Invalid muscle group entered.")
+
+# Function to update exercise information based on selected muscle group
+def update_exercise_info(muscle_group):
+    if muscle_group in exercises:
+        exercise_info_text.config(state=tk.NORMAL)
+        exercise_info_text.delete("1.0", tk.END)  # Clear previous text
+
+        for i, exercise in enumerate(exercises[muscle_group], start=1):
+            exercise_info_text.insert(tk.END, f"\n{i}. {exercise['Exercise']}\n")
+            exercise_info_text.insert(tk.END, f"    {exercise['Explanation']}\n\n")
+
+        exercise_info_text.config(state=tk.DISABLED)
+    else:
+        exercise_info_text.config(state=tk.NORMAL)
+        exercise_info_text.delete("1.0", tk.END)
+        exercise_info_text.insert(tk.END, "No exercises available for this muscle group.")
+        exercise_info_text.config(state=tk.DISABLED)
+
+# Create the main window
+root = tk.Tk()
+root.title("KratosX Shred Programme")
+
+# Login Frame
+login_frame = tk.Frame(root)
+login_frame.pack(pady=20)
+
+# Heading in the login frame
+heading_label_login = tk.Label(login_frame, text="KratosX", font=("bold", 20))
+heading_label_login.grid(row=0, columnspan=2, pady=5)
+
+# Username and Password entry in the login frame
+tk.Label(login_frame, text="Username:").grid(row=1, column=0, padx=10, pady=10)
+username_entry = tk.Entry(login_frame)
+username_entry.grid(row=1, column=1, padx=10, pady=10)
+
+tk.Label(login_frame, text="Password:").grid(row=2, column=0, padx=10, pady=10)
+password_entry = tk.Entry(login_frame, show="*")
+password_entry.grid(row=2, column=1, padx=10, pady=10)
+
+# Login button in the login frame
+login_button = tk.Button(login_frame, text="Login", command=check_login)
+login_button.grid(row=3, columnspan=2, pady=10)
+
+# Bind the <Return> key to the check_login function
+root.bind("<Return>", lambda event=None: check_login())
+
+# Exercise Frame
+exercise_frame = tk.Frame(root)
+
+# Heading in the exercise frame
+heading_label = tk.Label(exercise_frame, text="KratosX", font=("bold", 20))
+heading_label.pack(pady=5)
+
+# Muscle group selection in the exercise frame
+muscle_var = tk.StringVar()
+muscle_var.set("Chest")  # Default value
+tk.Label(exercise_frame, text="Select Muscle Group:").pack(pady=5)
+muscle_menu = tk.OptionMenu(exercise_frame, muscle_var, *exercises.keys())
+muscle_menu.pack(pady=5)
+
+# Bind the <Configure> event to update the exercise info immediately when the muscle group is selected
+muscle_menu.bind("<Configure>", lambda event, mg=muscle_var: update_exercise_info(mg.get()))
+
+# Exercise number entry in the exercise frame
+exercise_var = tk.StringVar()
+exercise_var.set("1")  # Default value
+tk.Label(exercise_frame, text="Enter Exercise Number:").pack(pady=5)
+exercise_entry = tk.Entry(exercise_frame, textvariable=exercise_var)
+exercise_entry.pack(pady=5)
+
+# Button to select exercise in the exercise frame
+select_button = tk.Button(exercise_frame, text="Select Exercise", command=select_exercise)
+select_button.pack(pady=5)
+
+# Display the exercise information in the exercise frame
+exercise_info_text = tk.Text(exercise_frame, height=100, width=400, wrap=tk.WORD, state=tk.DISABLED, font=("Arial", 10))
+exercise_info_text.pack(pady=10)
+
+# Start the GUI main loop
+root.mainloop()
